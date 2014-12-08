@@ -24,6 +24,8 @@ import com.nordpos.device.traslator.UnicodeTranslator;
 import com.nordpos.device.ticket.TicketPrinterException;
 import com.nordpos.device.receiptprinter.DevicePrinter;
 import com.nordpos.device.writter.Writter;
+import java.awt.image.BufferedImage;
+import javax.swing.JComponent;
 
 /**
  *
@@ -127,5 +129,26 @@ public class DevicePrinterESCPOS implements DevicePrinter {
 
         m_CommOutputPrinter.write(printerProcedures.getCutReceipt());
         m_CommOutputPrinter.flush();
+    }
+
+    @Override
+    public JComponent getPrinterComponent() {
+        return null;
+    }
+
+    @Override
+    public void printImage(BufferedImage image) {
+    }
+
+    @Override
+    public void printBarCode(String type, String position, String code) {
+    }
+
+    @Override
+    public void cutPaper(boolean complete) {
+    }
+
+    @Override
+    public void openDrawer() {
     }
 }

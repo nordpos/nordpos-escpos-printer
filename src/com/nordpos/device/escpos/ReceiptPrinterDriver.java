@@ -24,10 +24,16 @@ import com.nordpos.device.traslator.UnicodeTranslatorInt;
 import com.nordpos.device.receiptprinter.DevicePrinter;
 import com.nordpos.device.receiptprinter.DevicePrinterNull;
 import com.nordpos.device.ReceiptPrinterInterface;
+import com.nordpos.device.receiptprinter.DevicePrinterPanel;
+import com.nordpos.device.receiptprinter.DevicePrinterPlainText;
+import com.nordpos.device.receiptprinter.PaperFormat;
+import static com.nordpos.device.receiptprinter.ReceiptPrinterEmulator.EOL_DOS;
+import static com.nordpos.device.receiptprinter.ReceiptPrinterEmulator.EOL_UNIX;
 import com.nordpos.device.writter.WritterFile;
 import com.nordpos.device.writter.WritterRXTX;
 import com.nordpos.device.util.SerialPortParameters;
 import com.nordpos.device.util.StringParser;
+import java.awt.Component;
 
 /**
  *
@@ -60,9 +66,27 @@ public class ReceiptPrinterDriver implements ReceiptPrinterInterface {
                 } else {
                     return new DevicePrinterESCPOS(new WritterFile(sPrinterParam2), new CommandsEpsonPrinter(), new UnicodeTranslatorInt());
                 }
+            case "plaintext":
+                if ("file".equals(sPrinterParam1)) {
+                    if ("unix".equals(sp.nextToken(','))) {
+                        return new DevicePrinterPlainText(new WritterFile(sPrinterParam2), EOL_UNIX);
+                    } else {
+                        return new DevicePrinterPlainText(new WritterFile(sPrinterParam2), EOL_DOS);
+                    }
+
+                } else {
+                    return new DevicePrinterNull();
+                }
+            case "screen":
+                return new DevicePrinterPanel();
             default:
                 return new DevicePrinterNull();
         }
 
+    }
+
+    @Override
+    public DevicePrinter getReceiptPrinter(Component awtComponent, String sProperty, PaperFormat paperFormat) throws Exception {
+        return new DevicePrinterNull();
     }
 }
