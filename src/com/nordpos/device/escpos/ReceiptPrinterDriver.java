@@ -27,8 +27,8 @@ import com.nordpos.device.ReceiptPrinterInterface;
 import com.nordpos.device.receiptprinter.DevicePrinterPanel;
 import com.nordpos.device.receiptprinter.DevicePrinterPlainText;
 import com.nordpos.device.receiptprinter.PaperFormat;
-import static com.nordpos.device.receiptprinter.ReceiptPrinterEmulator.EOL_DOS;
-import static com.nordpos.device.receiptprinter.ReceiptPrinterEmulator.EOL_UNIX;
+import com.nordpos.device.receiptprinter.ReceiptPrinterEmulator;
+import com.nordpos.device.traslator.UnicodeTranslator;
 import com.nordpos.device.writter.WritterFile;
 import com.nordpos.device.writter.WritterRXTX;
 import com.nordpos.device.util.SerialPortParameters;
@@ -42,6 +42,9 @@ import java.awt.Component;
  */
 public class ReceiptPrinterDriver implements ReceiptPrinterInterface {
 
+    public static final byte[] CODE_TABLE_INT = {0x1B, 0x74, 0x01};
+    public static final byte[] CODE_TABLE_7 = {0x1B, 0x74, 0x07};
+
     @Override
     public DevicePrinter getReceiptPrinter(String sProperty) throws Exception {
         StringParser sp = new StringParser(sProperty);
@@ -52,28 +55,40 @@ public class ReceiptPrinterDriver implements ReceiptPrinterInterface {
         Integer iPrinterSerialPortDataBits;
         Integer iPrinterSerialPortStopBits;
         Integer iPrinterSerialPortParity;
+        UnicodeTranslator traslator;
 
         switch (sPrinterType) {
             case "epson":
+                traslator = new UnicodeTranslatorInt();
+                traslator.setCodeTable(CODE_TABLE_INT);
                 if ("rxtx".equals(sPrinterParam1) || "serial".equals(sPrinterParam1)) {
                     iPrinterSerialPortSpeed = SerialPortParameters.getSpeed(sp.nextToken(','));
                     iPrinterSerialPortDataBits = SerialPortParameters.getDataBits(sp.nextToken(','));
                     iPrinterSerialPortStopBits = SerialPortParameters.getStopBits(sp.nextToken(','));
                     iPrinterSerialPortParity = SerialPortParameters.getParity(sp.nextToken(','));
-                    UnicodeTranslatorInt traslator = new UnicodeTranslatorInt();
-                    traslator.setCodeTable(new byte[]{0x1B, 0x74, 0x01});
                     return new DevicePrinterESCPOS(new WritterRXTX(sPrinterParam2, iPrinterSerialPortSpeed, iPrinterSerialPortDataBits, iPrinterSerialPortStopBits, iPrinterSerialPortParity), new CommandsEpsonPrinter(), traslator);
                 } else {
-                    return new DevicePrinterESCPOS(new WritterFile(sPrinterParam2), new CommandsEpsonPrinter(), new UnicodeTranslatorInt());
+                    return new DevicePrinterESCPOS(new WritterFile(sPrinterParam2), new CommandsEpsonPrinter(), traslator);
+                }
+            case "epson.cp1251":
+                traslator = new UnicodeTranslatorCp1251();
+                traslator.setCodeTable(CODE_TABLE_7);
+                if ("rxtx".equals(sPrinterParam1) || "serial".equals(sPrinterParam1)) {
+                    iPrinterSerialPortSpeed = SerialPortParameters.getSpeed(sp.nextToken(','));
+                    iPrinterSerialPortDataBits = SerialPortParameters.getDataBits(sp.nextToken(','));
+                    iPrinterSerialPortStopBits = SerialPortParameters.getStopBits(sp.nextToken(','));
+                    iPrinterSerialPortParity = SerialPortParameters.getParity(sp.nextToken(','));
+                    return new DevicePrinterESCPOS(new WritterRXTX(sPrinterParam2, iPrinterSerialPortSpeed, iPrinterSerialPortDataBits, iPrinterSerialPortStopBits, iPrinterSerialPortParity), new CommandsEpsonPrinter(), traslator);
+                } else {
+                    return new DevicePrinterESCPOS(new WritterFile(sPrinterParam2), new CommandsEpsonPrinter(), traslator);
                 }
             case "plaintext":
                 if ("file".equals(sPrinterParam1)) {
                     if ("unix".equals(sp.nextToken(','))) {
-                        return new DevicePrinterPlainText(new WritterFile(sPrinterParam2), EOL_UNIX);
+                        return new DevicePrinterPlainText(new WritterFile(sPrinterParam2), ReceiptPrinterEmulator.EOL_UNIX);
                     } else {
-                        return new DevicePrinterPlainText(new WritterFile(sPrinterParam2), EOL_DOS);
+                        return new DevicePrinterPlainText(new WritterFile(sPrinterParam2), ReceiptPrinterEmulator.EOL_DOS);
                     }
-
                 } else {
                     return new DevicePrinterNull();
                 }
