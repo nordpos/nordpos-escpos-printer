@@ -23,7 +23,7 @@ package com.nordpos.device.escpos;
 import com.nordpos.device.traslator.UnicodeTranslatorInt;
 import com.nordpos.device.receiptprinter.DevicePrinter;
 import com.nordpos.device.receiptprinter.DevicePrinterNull;
-import com.nordpos.device.ReceiptPrinterInterface;
+import com.nordpos.device.receiptprinter.ReceiptPrinterInterface;
 import com.nordpos.device.receiptprinter.DevicePrinterPanel;
 import com.nordpos.device.receiptprinter.DevicePrinterPlainText;
 import com.nordpos.device.receiptprinter.PaperFormat;
