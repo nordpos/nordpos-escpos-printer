@@ -46,4 +46,6 @@ public abstract class Procedures {
     public abstract byte[] getCutReceipt();
 
     public abstract byte[] getNewLine();
+    
+     public abstract byte[] getOpenDrawer();
 }

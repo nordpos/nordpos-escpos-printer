@@ -87,4 +87,9 @@ public class CommandsEpsonPrinter extends Procedures {
     public byte[] getNewLine() {
         return new byte[]{0x0D, 0x0A}; // CR LF
     }
+
+    @Override
+    public byte[] getOpenDrawer() {
+        return new byte[]{0x1B, 0x70, 0x00, 0x32, -0x06};
+    }
 }

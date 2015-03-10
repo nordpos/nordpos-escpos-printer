@@ -150,5 +150,7 @@ public class DevicePrinterESCPOS implements DevicePrinter {
 
     @Override
     public void openDrawer() {
+        m_CommOutputPrinter.write(printerProcedures.getOpenDrawer());
+        m_CommOutputPrinter.flush();
     }
 }
