@@ -71,7 +71,7 @@ public class ReceiptPrinterDriver implements ReceiptPrinterInterface {
                 } else {
                     return new DevicePrinterESCPOS(new WritterFile(sPrinterParam2), new CommandsEpsonPrinter(), traslator);
                 }
-                case "epson.cp1251":
+            case "epson.cp1251":
                 traslator = new UnicodeTranslatorCp1251();
                 traslator.setCodeTable(CODE_TABLE_07);
                 if ("rxtx".equals(sPrinterParam1) || "serial".equals(sPrinterParam1)) {
@@ -94,7 +94,7 @@ public class ReceiptPrinterDriver implements ReceiptPrinterInterface {
                     return new DevicePrinterESCPOS(new WritterRXTX(sPrinterParam2, iPrinterSerialPortSpeed, iPrinterSerialPortDataBits, iPrinterSerialPortStopBits, iPrinterSerialPortParity), new CommandsEpsonPrinter(), traslator);
                 } else {
                     return new DevicePrinterESCPOS(new WritterFile(sPrinterParam2), new CommandsEpsonPrinter(), traslator);
-                }            
+                }
             case "plaintext":
                 if ("file".equals(sPrinterParam1)) {
                     if ("unix".equals(sp.nextToken(','))) {
