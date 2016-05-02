@@ -43,7 +43,8 @@ import java.awt.Component;
 public class ReceiptPrinterDriver implements ReceiptPrinterInterface {
 
     public static final byte[] CODE_TABLE_INT = {0x1B, 0x74, 0x01};
-    public static final byte[] CODE_TABLE_7 = {0x1B, 0x74, 0x07};
+    public static final byte[] CODE_TABLE_07 = {0x1C, 0x2E, 0x1B, 0x74, 0x07};
+    public static final byte[] CODE_TABLE_11 = {0x1C, 0x2E, 0x1B, 0x74, 0x11};
 
     @Override
     public DevicePrinter getReceiptPrinter(String sProperty) throws Exception {
@@ -70,9 +71,9 @@ public class ReceiptPrinterDriver implements ReceiptPrinterInterface {
                 } else {
                     return new DevicePrinterESCPOS(new WritterFile(sPrinterParam2), new CommandsEpsonPrinter(), traslator);
                 }
-            case "epson.cp1251":
+                case "epson.cp1251":
                 traslator = new UnicodeTranslatorCp1251();
-                traslator.setCodeTable(CODE_TABLE_7);
+                traslator.setCodeTable(CODE_TABLE_07);
                 if ("rxtx".equals(sPrinterParam1) || "serial".equals(sPrinterParam1)) {
                     iPrinterSerialPortSpeed = SerialPortParameters.getSpeed(sp.nextToken(','));
                     iPrinterSerialPortDataBits = SerialPortParameters.getDataBits(sp.nextToken(','));
@@ -82,6 +83,18 @@ public class ReceiptPrinterDriver implements ReceiptPrinterInterface {
                 } else {
                     return new DevicePrinterESCPOS(new WritterFile(sPrinterParam2), new CommandsEpsonPrinter(), traslator);
                 }
+            case "epson.cp866":
+                traslator = new UnicodeTranslatorCp866();
+                traslator.setCodeTable(CODE_TABLE_11);
+                if ("rxtx".equals(sPrinterParam1) || "serial".equals(sPrinterParam1)) {
+                    iPrinterSerialPortSpeed = SerialPortParameters.getSpeed(sp.nextToken(','));
+                    iPrinterSerialPortDataBits = SerialPortParameters.getDataBits(sp.nextToken(','));
+                    iPrinterSerialPortStopBits = SerialPortParameters.getStopBits(sp.nextToken(','));
+                    iPrinterSerialPortParity = SerialPortParameters.getParity(sp.nextToken(','));
+                    return new DevicePrinterESCPOS(new WritterRXTX(sPrinterParam2, iPrinterSerialPortSpeed, iPrinterSerialPortDataBits, iPrinterSerialPortStopBits, iPrinterSerialPortParity), new CommandsEpsonPrinter(), traslator);
+                } else {
+                    return new DevicePrinterESCPOS(new WritterFile(sPrinterParam2), new CommandsEpsonPrinter(), traslator);
+                }            
             case "plaintext":
                 if ("file".equals(sPrinterParam1)) {
                     if ("unix".equals(sp.nextToken(','))) {
